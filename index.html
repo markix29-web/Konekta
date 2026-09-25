@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Konekta — One app. Many needs. One community.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1F2A24;
+  --paper:#F1ECE1;
+  --moss:#3B6E5E;
+  --moss-dark:#2A5245;
+  --marigold:#E8A33D;
+  --brick:#C1543C;
+  --line: rgba(31,42,36,0.14);
+  --card: #FBF9F4;
+  box-sizing:border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
+
+/* header */
+header.app{
+  position:sticky; top:0; z-index:10;
+  padding: calc(14px + env(safe-area-inset-top,0px)) 18px 14px;
+  background: var(--moss);
+  color:#fff;
+  display:flex; align-items:center; justify-content:space-between;
+}
+header.app .brand{display:flex; align-items:baseline; gap:8px;}
+header.app .brand b{font-family:'Fraunces',serif; font-size:1.25rem; font-weight:600;}
+header.app .brand span{font-size:0.72rem; opacity:0.8;}
+header.app .avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--marigold); color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700; font-size:0.85rem; flex:none;
+}
+
+/* hero */
+.hero{
+  padding:28px 20px 8px;
+  max-width:640px; margin:0 auto;
+}
+.hero h1{font-size:1.5rem; line-height:1.25; margin:0 0 6px; font-weight:600;}
+.hero p{margin:0; color:rgba(31,42,36,0.68); font-size:0.95rem; max-width:46ch;}
+
+/* tab nav */
+nav.tabs{
+  display:flex; gap:6px; overflow-x:auto;
+  padding:16px 20px 10px; max-width:640px; margin:0 auto;
+  scrollbar-width:none;
+}
+nav.tabs::-webkit-scrollbar{display:none;}
+nav.tabs button{
+  flex:none;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:9px 14px;
+  border-radius:999px;
+  font-family:inherit; font-size:0.85rem; font-weight:600;
+  cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  transition: background .15s, color .15s, border-color .15s;
+}
+nav.tabs button .ico{font-size:1rem;}
+nav.tabs button.active{
+  background:var(--moss); color:#fff; border-color:var(--moss);
+}
+
+main{max-width:640px; margin:0 auto; padding:4px 20px 60px;}
+section.panel{display:none;}
+section.panel.active{display:block;}
+
+.panel-head{margin:14px 0 12px;}
+.panel-head h2{font-size:1.15rem; margin:0 0 4px; font-weight:600;}
+.panel-head p{margin:0; color:rgba(31,42,36,0.62); font-size:0.88rem;}
+
+/* form card */
+.composer{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+}
+.composer .row{display:flex; gap:8px; flex-wrap:wrap;}
+.composer input, .composer select, .composer textarea{
+  flex:1; min-width:140px;
+  font-family:inherit; font-size:0.9rem;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fff;
+  color:var(--ink);
+}
+.composer textarea{width:100%; resize:vertical; min-height:52px; margin-top:8px;}
+.composer .actions{display:flex; justify-content:flex-end; margin-top:10px;}
+.btn{
+  font-family:inherit; font-weight:600; font-size:0.86rem;
+  border:none; border-radius:9px; padding:10px 16px;
+  background:var(--moss); color:#fff; cursor:pointer;
+}
+.btn:active{background:var(--moss-dark);}
+.btn.alt{background:var(--marigold); color:var(--ink);}
+.btn.warn{background:var(--brick); color:#fff;}
+
+/* list items */
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:13px 14px; margin-bottom:10px;
+}
+.card .top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
+.card h3{margin:0; font-size:0.98rem; font-weight:600;}
+.card .meta{font-size:0.76rem; color:rgba(31,42,36,0.55); margin-top:2px;}
+.card p.body{margin:8px 0 0; font-size:0.88rem; color:rgba(31,42,36,0.8); line-height:1.45;}
+.tag{
+  flex:none;
+  font-size:0.72rem; font-weight:600;
+  padding:4px 9px; border-radius:999px;
+  background:rgba(59,110,94,0.12); color:var(--moss-dark);
+}
+.tag.urgent{background:rgba(193,84,60,0.14); color:var(--brick);}
+.tag.found{background:rgba(232,163,61,0.2); color:#8a5c14;}
+.card .row-btns{display:flex; gap:8px; margin-top:10px;}
+.mini{
+  font-size:0.78rem; font-weight:600; background:transparent;
+  border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer;
+  color:var(--ink);
+}
+.empty{
+  text-align:center; padding:26px 10px; color:rgba(31,42,36,0.45); font-size:0.88rem;
+}
+
+/* footer note */
+footer.note{
+  max-width:640px; margin:10px auto 30px; padding:0 20px;
+  font-size:0.76rem; color:rgba(31,42,36,0.45); text-align:center;
+}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="brand"><b>Konekta</b><span>One app. Many needs.</span></div>
+  <div class="avatar">MJ</div>
+</header>
+
+<div class="hero">
+  <h1>Have you ever needed help but didn't know who to ask?</h1>
+  <p>This is a working prototype of Konekta — try posting a request, offering a service, or reporting a problem below.</p>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="help"><span class="ico">🙋</span>Find Help</button>
+  <button class="tab-btn" data-tab="services"><span class="ico">🛠️</span>Services</button>
+  <button class="tab-btn" data-tab="lost"><span class="ico">🔎</span>Lost & Found</button>
+  <button class="tab-btn" data-tab="report"><span class="ico">📍</span>Report</button>
+  <button class="tab-btn" data-tab="community"><span class="ico">💬</span>Community</button>
+</nav>
+
+<main>
+
+  <!-- FIND HELP -->
+  <section class="panel active" id="panel-help">
+    <div class="panel-head"><h2>Ask for help</h2><p>Post what you need — a neighbor nearby may be able to help.</p></div>
+    <div class="composer">
+      <div class="row">
+        <input id="help-title" placeholder="What do you need help with?">
+      </div>
+      <textarea id="help-desc" placeholder="Add a few details (optional)"></textarea>
+      <div class="actions"><button class="btn" onclick="addHelp()">Post request</button></div>
+    </div>
+    <div id="help-list"></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="panel" id="panel-services">
+    <div class="panel-head"><h2>Offer or find a service</h2><p>List a skill you offer, or browse what's nearby.</p></div>
+    <div class="composer">
+      <div class="row">
+        <input id="svc-name" placeholder="Service (e.g. Plumbing, Tutoring)">
+        <input id="svc-price" placeholder="Rate (e.g. ₱300/hr)">
+      </div>
+      <textarea id="svc-desc" placeholder="Short description"></textarea>
+      <div class="actions"><button class="btn alt" onclick="addService()">List service</button></div>
+    </div>
+    <div id="svc-list"></div>
+  </section>
+
+  <!-- LOST & FOUND -->
+  <section class="panel" id="panel-lost">
+    <div class="panel-head"><h2>Lost & Found</h2><p>Post an item you lost, or one you found nearby.</p></div>
+    <div class="composer">
+      <div class="row">
+        <select id="lf-type">
+          <option value="lost">I lost something</option>
+          <option value="found">I found something</option>
+        </select>
+        <input id="lf-item" placeholder="Item name">
+      </div>
+      <textarea id="lf-desc" placeholder="Where / when, and any details"></textarea>
+      <div class="actions"><button class="btn" onclick="addLost()">Post</button></div>
+    </div>
+    <div id="lf-list"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="panel" id="panel-report">
+    <div class="panel-head"><h2>Report a community problem</h2><p>Flag something that needs the community's or authorities' attention.</p></div>
+    <div class="composer">
+      <div class="row">
+        <input id="rp-title" placeholder="What's the issue?">
+        <input id="rp-loc" placeholder="Location">
+      </div>
+      <textarea id="rp-desc" placeholder="Describe the problem"></textarea>
+      <div class="actions"><button class="btn warn" onclick="addReport()">Submit report</button></div>
+    </div>
+    <div id="rp-list"></div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section class="panel" id="panel-community">
+    <div class="panel-head"><h2>Community feed</h2><p>Everything posted across Konekta, in one place.</p></div>
+    <div id="feed-list"></div>
+  </section>
+
+</main>
+
+<footer class="note">Prototype for demo purposes — posts are stored only in this session and reset on reload.</footer>
+
+<script>
+// ---- state ----
+let state = {
+  help: [
+    {t:"Need someone to fix a leaking faucet", d:"Kitchen sink, minor leak. Available this weekend.", who:"Ana R.", when:"2h ago"},
+  ],
+  services: [
+    {n:"Math Tutoring (Grades 7–10)", p:"₱250/session", d:"College student, 3 yrs tutoring experience.", who:"Marco T.", when:"1d ago"},
+  ],
+  lost: [
+    {type:"found", item:"Black umbrella", d:"Found near the covered court, Tuesday afternoon.", who:"Grace L.", when:"5h ago"},
+  ],
+  report: [
+    {t:"Broken streetlight", loc:"Corner of Mabini & Rizal St.", d:"Out for over a week, area is very dark at night.", who:"Paolo D.", when:"3h ago", tag:"urgent"},
+  ]
+};
+
+function esc(s){
+  const d=document.createElement('div'); d.innerText=s; return d.innerHTML;
+}
+
+function addHelp(){
+  const t = document.getElementById('help-title').value.trim();
+  const d = document.getElementById('help-desc').value.trim();
+  if(!t){return;}
+  state.help.unshift({t, d, who:"You", when:"just now"});
+  document.getElementById('help-title').value='';
+  document.getElementById('help-desc').value='';
+  renderAll();
+}
+function addService(){
+  const n = document.getElementById('svc-name').value.trim();
+  const p = document.getElementById('svc-price').value.trim();
+  const d = document.getElementById('svc-desc').value.trim();
+  if(!n){return;}
+  state.services.unshift({n, p, d, who:"You", when:"just now"});
+  document.getElementById('svc-name').value='';
+  document.getElementById('svc-price').value='';
+  document.getElementById('svc-desc').value='';
+  renderAll();
+}
+function addLost(){
+  const type = document.getElementById('lf-type').value;
+  const item = document.getElementById('lf-item').value.trim();
+  const d = document.getElementById('lf-desc').value.trim();
+  if(!item){return;}
+  state.lost.unshift({type, item, d, who:"You", when:"just now"});
+  document.getElementById('lf-item').value='';
+  document.getElementById('lf-desc').value='';
+  renderAll();
+}
+function addReport(){
+  const t = document.getElementById('rp-title').value.trim();
+  const loc = document.getElementById('rp-loc').value.trim();
+  const d = document.getElementById('rp-desc').value.trim();
+  if(!t){return;}
+  state.report.unshift({t, loc, d, who:"You", when:"just now", tag:"urgent"});
+  document.getElementById('rp-title').value='';
+  document.getElementById('rp-loc').value='';
+  document.getElementById('rp-desc').value='';
+  renderAll();
+}
+
+function removeItem(cat, idx){
+  state[cat].splice(idx,1);
+  renderAll();
+}
+
+function renderHelp(){
+  const el = document.getElementById('help-list');
+  if(!state.help.length){el.innerHTML='<div class="empty">No requests yet — be the first to ask.</div>'; return;}
+  el.innerHTML = state.help.map((x,i)=>`
+    <div class="card">
+      <div class="top"><h3>${esc(x.t)}</h3><span class="tag">Help</span></div>
+      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
+      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
+      <div class="row-btns"><button class="mini" onclick="removeItem('help',${i})">I can help</button></div>
+    </div>`).join('');
+}
+function renderServices(){
+  const el = document.getElementById('svc-list');
+  if(!state.services.length){el.innerHTML='<div class="empty">No services listed yet.</div>'; return;}
+  el.innerHTML = state.services.map((x,i)=>`
+    <div class="card">
+      <div class="top"><h3>${esc(x.n)}</h3><span class="tag">${esc(x.p||'Service')}</span></div>
+      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
+      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
+      <div class="row-btns"><button class="mini" onclick="removeItem('services',${i})">Contact</button></div>
+    </div>`).join('');
+}
+function renderLost(){
+  const el = document.getElementById('lf-list');
+  if(!state.lost.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
+  el.innerHTML = state.lost.map((x,i)=>`
+    <div class="card">
+      <div class="top"><h3>${esc(x.item)}</h3><span class="tag ${x.type==='found'?'found':''}">${x.type==='found'?'Found':'Lost'}</span></div>
+      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
+      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
+      <div class="row-btns"><button class="mini" onclick="removeItem('lost',${i})">This is mine / I have it</button></div>
+    </div>`).join('');
+}
+function renderReport(){
+  const el = document.getElementById('rp-list');
+  if(!state.report.length){el.innerHTML='<div class="empty">No reports yet.</div>'; return;}
+  el.innerHTML = state.report.map((x,i)=>`
+    <div class="card">
+      <div class="top"><h3>${esc(x.t)}</h3><span class="tag urgent">Report</span></div>
+      <div class="meta">${esc(x.loc||'')} · ${esc(x.who)} · ${esc(x.when)}</div>
+      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
+      <div class="row-btns"><button class="mini" onclick="removeItem('report',${i})">Mark resolved</button></div>
+    </div>`).join('');
+}
+function renderFeed(){
+  const el = document.getElementById('feed-list');
+  const items = [
+    ...state.help.map(x=>({label:'Help', title:x.t, who:x.who, when:x.when})),
+    ...state.services.map(x=>({label:'Service', title:x.n, who:x.who, when:x.when})),
+    ...state.lost.map(x=>({label:x.type==='found'?'Found':'Lost', title:x.item, who:x.who, when:x.when})),
+    ...state.report.map(x=>({label:'Report', title:x.t, who:x.who, when:x.when})),
+  ];
+  if(!items.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
+  el.innerHTML = items.map(x=>`
+    <div class="card">
+      <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.label)}</span></div>
+      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
+    </div>`).join('');
+}
+function renderAll(){
+  renderHelp(); renderServices(); renderLost(); renderReport(); renderFeed();
+}
+
+document.getElementById('tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+});
+
+renderAll();
+</script>
+</body>
+  </html>
+  
