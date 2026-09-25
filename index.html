@@ -244,131 +244,139 @@ footer.note{
 
 <footer class="note">Prototype for demo purposes — posts are stored only in this session and reset on reload.</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ---- state ----
-let state = {
-  help: [
-    {t:"Need someone to fix a leaking faucet", d:"Kitchen sink, minor leak. Available this weekend.", who:"Ana R.", when:"2h ago"},
-  ],
-  services: [
-    {n:"Math Tutoring (Grades 7–10)", p:"₱250/session", d:"College student, 3 yrs tutoring experience.", who:"Marco T.", when:"1d ago"},
-  ],
-  lost: [
-    {type:"found", item:"Black umbrella", d:"Found near the covered court, Tuesday afternoon.", who:"Grace L.", when:"5h ago"},
-  ],
-  report: [
-    {t:"Broken streetlight", loc:"Corner of Mabini & Rizal St.", d:"Out for over a week, area is very dark at night.", who:"Paolo D.", when:"3h ago", tag:"urgent"},
-  ]
-};
+// ---- Supabase connection ----
+const SUPABASE_URL = "https://xxnsafgrqfexqbwwypcn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y22SMQZU46mQX6-JQQqpqA_yLW-X310";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let posts = { help: [], services: [], lost: [], report: [] };
 
 function esc(s){
-  const d=document.createElement('div'); d.innerText=s; return d.innerHTML;
+  const d=document.createElement('div'); d.innerText = s || ''; return d.innerHTML;
+}
+function timeAgo(iso){
+  const diff = Math.max(0, Date.now() - new Date(iso).getTime());
+  const m = Math.floor(diff/60000);
+  if(m < 1) return 'just now';
+  if(m < 60) return m+'m ago';
+  const h = Math.floor(m/60);
+  if(h < 24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
+
+async function loadPosts(){
+  const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false });
+  if(error){ console.error(error); return; }
+  posts = { help:[], services:[], lost:[], report:[] };
+  data.forEach(p=>{
+    if(posts[p.category]) posts[p.category].push(p);
+  });
+  renderAll();
+}
+
+async function insertPost(category, title, description, extra){
+  const { error } = await sb.from('posts').insert([{ category, title, description, extra, author:'Anonymous' }]);
+  if(error){ alert('Could not post — check your connection and try again.'); console.error(error); return; }
+  loadPosts();
 }
 
 function addHelp(){
   const t = document.getElementById('help-title').value.trim();
   const d = document.getElementById('help-desc').value.trim();
-  if(!t){return;}
-  state.help.unshift({t, d, who:"You", when:"just now"});
+  if(!t) return;
+  insertPost('help', t, d, null);
   document.getElementById('help-title').value='';
   document.getElementById('help-desc').value='';
-  renderAll();
 }
 function addService(){
   const n = document.getElementById('svc-name').value.trim();
   const p = document.getElementById('svc-price').value.trim();
   const d = document.getElementById('svc-desc').value.trim();
-  if(!n){return;}
-  state.services.unshift({n, p, d, who:"You", when:"just now"});
+  if(!n) return;
+  insertPost('services', n, d, p);
   document.getElementById('svc-name').value='';
   document.getElementById('svc-price').value='';
   document.getElementById('svc-desc').value='';
-  renderAll();
 }
 function addLost(){
   const type = document.getElementById('lf-type').value;
   const item = document.getElementById('lf-item').value.trim();
   const d = document.getElementById('lf-desc').value.trim();
-  if(!item){return;}
-  state.lost.unshift({type, item, d, who:"You", when:"just now"});
+  if(!item) return;
+  insertPost('lost', item, d, type);
   document.getElementById('lf-item').value='';
   document.getElementById('lf-desc').value='';
-  renderAll();
 }
 function addReport(){
   const t = document.getElementById('rp-title').value.trim();
   const loc = document.getElementById('rp-loc').value.trim();
   const d = document.getElementById('rp-desc').value.trim();
-  if(!t){return;}
-  state.report.unshift({t, loc, d, who:"You", when:"just now", tag:"urgent"});
+  if(!t) return;
+  insertPost('report', t, d, loc);
   document.getElementById('rp-title').value='';
   document.getElementById('rp-loc').value='';
   document.getElementById('rp-desc').value='';
-  renderAll();
-}
-
-function removeItem(cat, idx){
-  state[cat].splice(idx,1);
-  renderAll();
 }
 
 function renderHelp(){
   const el = document.getElementById('help-list');
-  if(!state.help.length){el.innerHTML='<div class="empty">No requests yet — be the first to ask.</div>'; return;}
-  el.innerHTML = state.help.map((x,i)=>`
+  if(!posts.help.length){el.innerHTML='<div class="empty">No requests yet — be the first to ask.</div>'; return;}
+  el.innerHTML = posts.help.map(x=>`
     <div class="card">
-      <div class="top"><h3>${esc(x.t)}</h3><span class="tag">Help</span></div>
-      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
-      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
-      <div class="row-btns"><button class="mini" onclick="removeItem('help',${i})">I can help</button></div>
+      <div class="top"><h3>${esc(x.title)}</h3><span class="tag">Help</span></div>
+      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
+      <div class="row-btns"><button class="mini">I can help</button></div>
     </div>`).join('');
 }
 function renderServices(){
   const el = document.getElementById('svc-list');
-  if(!state.services.length){el.innerHTML='<div class="empty">No services listed yet.</div>'; return;}
-  el.innerHTML = state.services.map((x,i)=>`
+  if(!posts.services.length){el.innerHTML='<div class="empty">No services listed yet.</div>'; return;}
+  el.innerHTML = posts.services.map(x=>`
     <div class="card">
-      <div class="top"><h3>${esc(x.n)}</h3><span class="tag">${esc(x.p||'Service')}</span></div>
-      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
-      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
-      <div class="row-btns"><button class="mini" onclick="removeItem('services',${i})">Contact</button></div>
+      <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.extra||'Service')}</span></div>
+      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
+      <div class="row-btns"><button class="mini">Contact</button></div>
     </div>`).join('');
 }
 function renderLost(){
   const el = document.getElementById('lf-list');
-  if(!state.lost.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
-  el.innerHTML = state.lost.map((x,i)=>`
+  if(!posts.lost.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
+  el.innerHTML = posts.lost.map(x=>`
     <div class="card">
-      <div class="top"><h3>${esc(x.item)}</h3><span class="tag ${x.type==='found'?'found':''}">${x.type==='found'?'Found':'Lost'}</span></div>
-      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
-      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
-      <div class="row-btns"><button class="mini" onclick="removeItem('lost',${i})">This is mine / I have it</button></div>
+      <div class="top"><h3>${esc(x.title)}</h3><span class="tag ${x.extra==='found'?'found':''}">${x.extra==='found'?'Found':'Lost'}</span></div>
+      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
+      <div class="row-btns"><button class="mini">This is mine / I have it</button></div>
     </div>`).join('');
 }
 function renderReport(){
   const el = document.getElementById('rp-list');
-  if(!state.report.length){el.innerHTML='<div class="empty">No reports yet.</div>'; return;}
-  el.innerHTML = state.report.map((x,i)=>`
+  if(!posts.report.length){el.innerHTML='<div class="empty">No reports yet.</div>'; return;}
+  el.innerHTML = posts.report.map(x=>`
     <div class="card">
-      <div class="top"><h3>${esc(x.t)}</h3><span class="tag urgent">Report</span></div>
-      <div class="meta">${esc(x.loc||'')} · ${esc(x.who)} · ${esc(x.when)}</div>
-      ${x.d?`<p class="body">${esc(x.d)}</p>`:''}
-      <div class="row-btns"><button class="mini" onclick="removeItem('report',${i})">Mark resolved</button></div>
+      <div class="top"><h3>${esc(x.title)}</h3><span class="tag urgent">Report</span></div>
+      <div class="meta">${esc(x.extra||'')} · ${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
+      <div class="row-btns"><button class="mini">Mark resolved</button></div>
     </div>`).join('');
 }
 function renderFeed(){
   const el = document.getElementById('feed-list');
   const items = [
-    ...state.help.map(x=>({label:'Help', title:x.t, who:x.who, when:x.when})),
-    ...state.services.map(x=>({label:'Service', title:x.n, who:x.who, when:x.when})),
-    ...state.lost.map(x=>({label:x.type==='found'?'Found':'Lost', title:x.item, who:x.who, when:x.when})),
-    ...state.report.map(x=>({label:'Report', title:x.t, who:x.who, when:x.when})),
-  ];
+    ...posts.help.map(x=>({label:'Help', title:x.title, author:x.author, created_at:x.created_at})),
+    ...posts.services.map(x=>({label:'Service', title:x.title, author:x.author, created_at:x.created_at})),
+    ...posts.lost.map(x=>({label:x.extra==='found'?'Found':'Lost', title:x.title, author:x.author, created_at:x.created_at})),
+    ...posts.report.map(x=>({label:'Report', title:x.title, author:x.author, created_at:x.created_at})),
+  ].sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
   if(!items.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
   el.innerHTML = items.map(x=>`
     <div class="card">
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.label)}</span></div>
-      <div class="meta">${esc(x.who)} · ${esc(x.when)}</div>
+      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
     </div>`).join('');
 }
 function renderAll(){
@@ -384,8 +392,9 @@ document.getElementById('tabs').addEventListener('click', (e)=>{
   document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
 });
 
-renderAll();
+loadPosts();
+// refresh every 15s so new posts from other visitors show up
+setInterval(loadPosts, 15000);
 </script>
 </body>
-  </html>
-  
+</html>
