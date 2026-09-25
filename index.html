@@ -33,7 +33,6 @@ body{
 }
 h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
 
-/* header */
 header.app{
   position:sticky; top:0; z-index:10;
   padding: calc(14px + env(safe-area-inset-top,0px)) 18px 14px;
@@ -44,22 +43,11 @@ header.app{
 header.app .brand{display:flex; align-items:baseline; gap:8px;}
 header.app .brand b{font-family:'Fraunces',serif; font-size:1.25rem; font-weight:600;}
 header.app .brand span{font-size:0.72rem; opacity:0.8;}
-header.app .avatar{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--marigold); color:var(--ink);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700; font-size:0.85rem; flex:none;
-}
 
-/* hero */
-.hero{
-  padding:28px 20px 8px;
-  max-width:640px; margin:0 auto;
-}
+.hero{ padding:28px 20px 8px; max-width:640px; margin:0 auto; }
 .hero h1{font-size:1.5rem; line-height:1.25; margin:0 0 6px; font-weight:600;}
 .hero p{margin:0; color:rgba(31,42,36,0.68); font-size:0.95rem; max-width:46ch;}
 
-/* tab nav */
 nav.tabs{
   display:flex; gap:6px; overflow-x:auto;
   padding:16px 20px 10px; max-width:640px; margin:0 auto;
@@ -67,21 +55,14 @@ nav.tabs{
 }
 nav.tabs::-webkit-scrollbar{display:none;}
 nav.tabs button{
-  flex:none;
-  border:1px solid var(--line);
-  background:var(--card);
-  color:var(--ink);
-  padding:9px 14px;
-  border-radius:999px;
-  font-family:inherit; font-size:0.85rem; font-weight:600;
-  cursor:pointer;
+  flex:none; border:1px solid var(--line); background:var(--card); color:var(--ink);
+  padding:9px 14px; border-radius:999px;
+  font-family:inherit; font-size:0.85rem; font-weight:600; cursor:pointer;
   display:flex; align-items:center; gap:6px;
   transition: background .15s, color .15s, border-color .15s;
 }
 nav.tabs button .ico{font-size:1rem;}
-nav.tabs button.active{
-  background:var(--moss); color:#fff; border-color:var(--moss);
-}
+nav.tabs button.active{ background:var(--moss); color:#fff; border-color:var(--moss); }
 
 main{max-width:640px; margin:0 auto; padding:4px 20px 60px;}
 section.panel{display:none;}
@@ -91,63 +72,65 @@ section.panel.active{display:block;}
 .panel-head h2{font-size:1.15rem; margin:0 0 4px; font-weight:600;}
 .panel-head p{margin:0; color:rgba(31,42,36,0.62); font-size:0.88rem;}
 
-/* form card */
-.composer{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:16px;
-}
+.composer{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:16px; }
 .composer .row{display:flex; gap:8px; flex-wrap:wrap;}
 .composer input, .composer select, .composer textarea{
-  flex:1; min-width:140px;
-  font-family:inherit; font-size:0.9rem;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:#fff;
-  color:var(--ink);
+  flex:1; min-width:140px; font-family:inherit; font-size:0.9rem;
+  padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--ink);
 }
 .composer textarea{width:100%; resize:vertical; min-height:52px; margin-top:8px;}
+.composer .hint{font-size:0.76rem; color:rgba(31,42,36,0.5); margin-top:6px;}
 .composer .actions{display:flex; justify-content:flex-end; margin-top:10px;}
 .btn{
   font-family:inherit; font-weight:600; font-size:0.86rem;
-  border:none; border-radius:9px; padding:10px 16px;
-  background:var(--moss); color:#fff; cursor:pointer;
+  border:none; border-radius:9px; padding:10px 16px; background:var(--moss); color:#fff; cursor:pointer;
 }
 .btn:active{background:var(--moss-dark);}
 .btn.alt{background:var(--marigold); color:var(--ink);}
 .btn.warn{background:var(--brick); color:#fff;}
 
-/* list items */
 .card{
   background:var(--card); border:1px solid var(--line); border-radius:14px;
-  padding:13px 14px; margin-bottom:10px;
+  padding:13px 14px; margin-bottom:10px; cursor:pointer; transition:border-color .15s, box-shadow .15s;
 }
+.card:active{ border-color:var(--moss); }
 .card .top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
 .card h3{margin:0; font-size:0.98rem; font-weight:600;}
-.card .meta{font-size:0.76rem; color:rgba(31,42,36,0.55); margin-top:2px;}
+.card .meta{font-size:0.76rem; color:rgba(31,42,36,0.55); margin-top:2px; display:flex; align-items:center; gap:6px;}
+.mini-avatar{
+  width:20px; height:20px; border-radius:50%; flex:none;
+  background:var(--moss); color:#fff; font-size:0.62rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
 .card p.body{margin:8px 0 0; font-size:0.88rem; color:rgba(31,42,36,0.8); line-height:1.45;}
 .tag{
-  flex:none;
-  font-size:0.72rem; font-weight:600;
-  padding:4px 9px; border-radius:999px;
+  flex:none; font-size:0.72rem; font-weight:600; padding:4px 9px; border-radius:999px;
   background:rgba(59,110,94,0.12); color:var(--moss-dark);
 }
 .tag.urgent{background:rgba(193,84,60,0.14); color:var(--brick);}
 .tag.found{background:rgba(232,163,61,0.2); color:#8a5c14;}
-.card .row-btns{display:flex; gap:8px; margin-top:10px;}
-.mini{
-  font-size:0.78rem; font-weight:600; background:transparent;
-  border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer;
-  color:var(--ink);
+.contact-hint{
+  margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+  font-size:0.8rem; font-weight:600; color:var(--moss-dark);
+  display:flex; align-items:center; gap:6px;
 }
-.empty{
-  text-align:center; padding:26px 10px; color:rgba(31,42,36,0.45); font-size:0.88rem;
-}
+.empty{ text-align:center; padding:26px 10px; color:rgba(31,42,36,0.45); font-size:0.88rem; }
+.loading{ text-align:center; padding:26px 10px; color:rgba(31,42,36,0.4); font-size:0.85rem; }
 
-/* footer note */
+.modal-overlay{
+  display:none; position:fixed; inset:0; background:rgba(31,42,36,0.5);
+  z-index:100; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{ background:var(--card); border-radius:16px; width:100%; max-width:360px; padding:20px; }
+.modal-box h3{margin:0 0 4px;}
+.modal-box .who{font-size:0.85rem; color:rgba(31,42,36,0.6); margin-bottom:14px;}
+.contact-box{
+  background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px;
+  font-size:0.95rem; font-weight:600; color:var(--moss-dark); word-break:break-word;
+}
+.modal-box .close-btn{ width:100%; margin-top:14px; }
+
 footer.note{
   max-width:640px; margin:10px auto 30px; padding:0 20px;
   font-size:0.76rem; color:rgba(31,42,36,0.45); text-align:center;
@@ -158,12 +141,11 @@ footer.note{
 
 <header class="app">
   <div class="brand"><b>Konekta</b><span>One app. Many needs.</span></div>
-  <div class="avatar">MJ</div>
 </header>
 
 <div class="hero">
   <h1>Have you ever needed help but didn't know who to ask?</h1>
-  <p>This is a working prototype of Konekta — try posting a request, offering a service, or reporting a problem below.</p>
+  <p>Post what you need, or tap any post to see how to reach the person who made it.</p>
 </div>
 
 <nav class="tabs" id="tabs">
@@ -176,20 +158,19 @@ footer.note{
 
 <main>
 
-  <!-- FIND HELP -->
   <section class="panel active" id="panel-help">
     <div class="panel-head"><h2>Ask for help</h2><p>Post what you need — a neighbor nearby may be able to help.</p></div>
     <div class="composer">
-      <div class="row">
-        <input id="help-title" placeholder="What do you need help with?">
-      </div>
+      <div class="row"><input id="help-title" placeholder="What do you need help with?"></div>
       <textarea id="help-desc" placeholder="Add a few details (optional)"></textarea>
+      <input id="help-name" placeholder="Your name" style="margin-top:8px;">
+      <input id="help-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
+      <div class="hint">Your contact is shown only when someone taps your post.</div>
       <div class="actions"><button class="btn" onclick="addHelp()">Post request</button></div>
     </div>
-    <div id="help-list"></div>
+    <div id="help-list"><div class="loading">Loading…</div></div>
   </section>
 
-  <!-- SERVICES -->
   <section class="panel" id="panel-services">
     <div class="panel-head"><h2>Offer or find a service</h2><p>List a skill you offer, or browse what's nearby.</p></div>
     <div class="composer">
@@ -198,12 +179,14 @@ footer.note{
         <input id="svc-price" placeholder="Rate (e.g. ₱300/hr)">
       </div>
       <textarea id="svc-desc" placeholder="Short description"></textarea>
+      <input id="svc-provider" placeholder="Your name" style="margin-top:8px;">
+      <input id="svc-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
+      <div class="hint">Your contact is shown only when someone taps your post.</div>
       <div class="actions"><button class="btn alt" onclick="addService()">List service</button></div>
     </div>
-    <div id="svc-list"></div>
+    <div id="svc-list"><div class="loading">Loading…</div></div>
   </section>
 
-  <!-- LOST & FOUND -->
   <section class="panel" id="panel-lost">
     <div class="panel-head"><h2>Lost & Found</h2><p>Post an item you lost, or one you found nearby.</p></div>
     <div class="composer">
@@ -215,12 +198,14 @@ footer.note{
         <input id="lf-item" placeholder="Item name">
       </div>
       <textarea id="lf-desc" placeholder="Where / when, and any details"></textarea>
+      <input id="lf-name" placeholder="Your name" style="margin-top:8px;">
+      <input id="lf-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
+      <div class="hint">Your contact is shown only when someone taps your post.</div>
       <div class="actions"><button class="btn" onclick="addLost()">Post</button></div>
     </div>
-    <div id="lf-list"></div>
+    <div id="lf-list"><div class="loading">Loading…</div></div>
   </section>
 
-  <!-- REPORT -->
   <section class="panel" id="panel-report">
     <div class="panel-head"><h2>Report a community problem</h2><p>Flag something that needs the community's or authorities' attention.</p></div>
     <div class="composer">
@@ -229,33 +214,42 @@ footer.note{
         <input id="rp-loc" placeholder="Location">
       </div>
       <textarea id="rp-desc" placeholder="Describe the problem"></textarea>
+      <input id="rp-name" placeholder="Your name" style="margin-top:8px;">
+      <input id="rp-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
+      <div class="hint">Your contact is shown only when someone taps your post.</div>
       <div class="actions"><button class="btn warn" onclick="addReport()">Submit report</button></div>
     </div>
-    <div id="rp-list"></div>
+    <div id="rp-list"><div class="loading">Loading…</div></div>
   </section>
 
-  <!-- COMMUNITY -->
   <section class="panel" id="panel-community">
     <div class="panel-head"><h2>Community feed</h2><p>Everything posted across Konekta, in one place.</p></div>
-    <div id="feed-list"></div>
+    <div id="feed-list"><div class="loading">Loading…</div></div>
   </section>
 
 </main>
 
-<footer class="note">Prototype for demo purposes — posts are stored only in this session and reset on reload.</footer>
+<div class="modal-overlay" id="contact-modal" onclick="if(event.target===this)closeContactModal()">
+  <div class="modal-box">
+    <h3 id="cm-title"></h3>
+    <div class="who" id="cm-who"></div>
+    <div class="contact-box" id="cm-contact"></div>
+    <button class="btn close-btn" onclick="closeContactModal()">Close</button>
+  </div>
+</div>
+
+<footer class="note">Konekta prototype — posts are shared live across everyone who visits this site.</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ---- Supabase connection ----
 const SUPABASE_URL = "https://xxnsafgrqfexqbwwypcn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y22SMQZU46mQX6-JQQqpqA_yLW-X310";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let posts = { help: [], services: [], lost: [], report: [] };
 
-function esc(s){
-  const d=document.createElement('div'); d.innerText = s || ''; return d.innerHTML;
-}
+function esc(s){ const d=document.createElement('div'); d.innerText = s || ''; return d.innerHTML; }
+function initials(name){ return (name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
 function timeAgo(iso){
   const diff = Math.max(0, Date.now() - new Date(iso).getTime());
   const m = Math.floor(diff/60000);
@@ -270,14 +264,13 @@ async function loadPosts(){
   const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false });
   if(error){ console.error(error); return; }
   posts = { help:[], services:[], lost:[], report:[] };
-  data.forEach(p=>{
-    if(posts[p.category]) posts[p.category].push(p);
-  });
+  data.forEach(p=>{ if(posts[p.category]) posts[p.category].push(p); });
   renderAll();
 }
 
-async function insertPost(category, title, description, extra){
-  const { error } = await sb.from('posts').insert([{ category, title, description, extra, author:'Anonymous' }]);
+async function insertPost(category, title, description, extra, author, contact){
+  if(!author){ alert('Please enter your name.'); return; }
+  const { error } = await sb.from('posts').insert([{ category, title, description, extra, author, contact }]);
   if(error){ alert('Could not post — check your connection and try again.'); console.error(error); return; }
   loadPosts();
 }
@@ -285,116 +278,128 @@ async function insertPost(category, title, description, extra){
 function addHelp(){
   const t = document.getElementById('help-title').value.trim();
   const d = document.getElementById('help-desc').value.trim();
+  const name = document.getElementById('help-name').value.trim();
+  const c = document.getElementById('help-contact').value.trim();
   if(!t) return;
-  insertPost('help', t, d, null);
+  insertPost('help', t, d, null, name, c);
   document.getElementById('help-title').value='';
   document.getElementById('help-desc').value='';
+  document.getElementById('help-name').value='';
+  document.getElementById('help-contact').value='';
 }
 function addService(){
   const n = document.getElementById('svc-name').value.trim();
   const p = document.getElementById('svc-price').value.trim();
   const d = document.getElementById('svc-desc').value.trim();
+  const name = document.getElementById('svc-provider').value.trim();
+  const c = document.getElementById('svc-contact').value.trim();
   if(!n) return;
-  insertPost('services', n, d, p);
+  insertPost('services', n, d, p, name, c);
   document.getElementById('svc-name').value='';
   document.getElementById('svc-price').value='';
   document.getElementById('svc-desc').value='';
+  document.getElementById('svc-provider').value='';
+  document.getElementById('svc-contact').value='';
 }
 function addLost(){
   const type = document.getElementById('lf-type').value;
   const item = document.getElementById('lf-item').value.trim();
   const d = document.getElementById('lf-desc').value.trim();
+  const name = document.getElementById('lf-name').value.trim();
+  const c = document.getElementById('lf-contact').value.trim();
   if(!item) return;
-  insertPost('lost', item, d, type);
+  insertPost('lost', item, d, type, name, c);
   document.getElementById('lf-item').value='';
   document.getElementById('lf-desc').value='';
+  document.getElementById('lf-name').value='';
+  document.getElementById('lf-contact').value='';
 }
 function addReport(){
   const t = document.getElementById('rp-title').value.trim();
   const loc = document.getElementById('rp-loc').value.trim();
   const d = document.getElementById('rp-desc').value.trim();
+  const name = document.getElementById('rp-name').value.trim();
+  const c = document.getElementById('rp-contact').value.trim();
   if(!t) return;
-  insertPost('report', t, d, loc);
+  insertPost('report', t, d, loc, name, c);
   document.getElementById('rp-title').value='';
   document.getElementById('rp-loc').value='';
   document.getElementById('rp-desc').value='';
+  document.getElementById('rp-name').value='';
+  document.getElementById('rp-contact').value='';
+}
+
+function openContactModal(title, author, contact){
+  document.getElementById('cm-title').textContent = title;
+  document.getElementById('cm-who').textContent = 'Posted by ' + (author || 'Anonymous');
+  document.getElementById('cm-contact').textContent = contact ? contact : 'No contact info was provided for this post.';
+  document.getElementById('contact-modal').classList.add('open');
+}
+function closeContactModal(){
+  document.getElementById('contact-modal').classList.remove('open');
 }
 
 function renderHelp(){
   const el = document.getElementById('help-list');
   if(!posts.help.length){el.innerHTML='<div class="empty">No requests yet — be the first to ask.</div>'; return;}
   el.innerHTML = posts.help.map(x=>`
-    <div class="card">
+    <div class="card" onclick='openContactModal(${JSON.stringify(x.title)}, ${JSON.stringify(x.author)}, ${JSON.stringify(x.contact||"")})'>
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">Help</span></div>
-      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="row-btns"><button class="mini">I can help</button></div>
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
     </div>`).join('');
 }
 function renderServices(){
   const el = document.getElementById('svc-list');
   if(!posts.services.length){el.innerHTML='<div class="empty">No services listed yet.</div>'; return;}
   el.innerHTML = posts.services.map(x=>`
-    <div class="card">
+    <div class="card" onclick='openContactModal(${JSON.stringify(x.title)}, ${JSON.stringify(x.author)}, ${JSON.stringify(x.contact||"")})'>
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.extra||'Service')}</span></div>
-      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="row-btns"><button class="mini">Contact</button></div>
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
     </div>`).join('');
 }
 function renderLost(){
   const el = document.getElementById('lf-list');
   if(!posts.lost.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
   el.innerHTML = posts.lost.map(x=>`
-    <div class="card">
+    <div class="card" onclick='openContactModal(${JSON.stringify(x.title)}, ${JSON.stringify(x.author)}, ${JSON.stringify(x.contact||"")})'>
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag ${x.extra==='found'?'found':''}">${x.extra==='found'?'Found':'Lost'}</span></div>
-      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="row-btns"><button class="mini">This is mine / I have it</button></div>
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
     </div>`).join('');
 }
 function renderReport(){
   const el = document.getElementById('rp-list');
   if(!posts.report.length){el.innerHTML='<div class="empty">No reports yet.</div>'; return;}
   el.innerHTML = posts.report.map(x=>`
-    <div class="card">
+    <div class="card" onclick='openContactModal(${JSON.stringify(x.title)}, ${JSON.stringify(x.author)}, ${JSON.stringify(x.contact||"")})'>
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag urgent">Report</span></div>
-      <div class="meta">${esc(x.extra||'')} · ${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.extra||'')} · ${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="row-btns"><button class="mini">Mark resolved</button></div>
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
     </div>`).join('');
 }
 function renderFeed(){
   const el = document.getElementById('feed-list');
   const items = [
-    ...posts.help.map(x=>({label:'Help', title:x.title, author:x.author, created_at:x.created_at})),
-    ...posts.services.map(x=>({label:'Service', title:x.title, author:x.author, created_at:x.created_at})),
-    ...posts.lost.map(x=>({label:x.extra==='found'?'Found':'Lost', title:x.title, author:x.author, created_at:x.created_at})),
-    ...posts.report.map(x=>({label:'Report', title:x.title, author:x.author, created_at:x.created_at})),
+    ...posts.help.map(x=>({label:'Help', title:x.title, author:x.author, contact:x.contact, created_at:x.created_at})),
+    ...posts.services.map(x=>({label:'Service', title:x.title, author:x.author, contact:x.contact, created_at:x.created_at})),
+    ...posts.lost.map(x=>({label:x.extra==='found'?'Found':'Lost', title:x.title, author:x.author, contact:x.contact, created_at:x.created_at})),
+    ...posts.report.map(x=>({label:'Report', title:x.title, author:x.author, contact:x.contact, created_at:x.created_at})),
   ].sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
   if(!items.length){el.innerHTML='<div class="empty">Nothing posted yet.</div>'; return;}
   el.innerHTML = items.map(x=>`
-    <div class="card">
+    <div class="card" onclick='openContactModal(${JSON.stringify(x.title)}, ${JSON.stringify(x.author)}, ${JSON.stringify(x.contact||"")})'>
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.label)}</span></div>
-      <div class="meta">${esc(x.author)} · ${timeAgo(x.created_at)}</div>
+      <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
     </div>`).join('');
 }
 function renderAll(){
   renderHelp(); renderServices(); renderLost(); renderReport(); renderFeed();
 }
 
-document.getElementById('tabs').addEventListener('click', (e)=>{
-  const btn = e.target.closest('.tab-btn');
-  if(!btn) return;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-});
-
-loadPosts();
-// refresh every 15s so new posts from other visitors show up
-setInterval(loadPosts, 15000);
-</script>
-</body>
-</html>
+document.getElementById('tabs').addEve
