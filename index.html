@@ -112,7 +112,25 @@ section.panel.active{display:block;}
 .contact-hint{
   margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
   font-size:0.8rem; font-weight:600; color:var(--moss-dark);
-  display:flex; align-items:center; gap:6px;
+  display:flex; align-items:center; justify-content:space-between; gap:6px;
+}
+.flag-btn{
+  font-family:inherit; font-size:0.74rem; font-weight:600;
+  background:transparent; border:1px solid var(--line); border-radius:7px;
+  padding:4px 8px; color:rgba(31,42,36,0.55); cursor:pointer; flex:none;
+}
+.flag-btn:active{ border-color:var(--brick); color:var(--brick); }
+.warn-badge{
+  background:rgba(193,84,60,0.12); color:var(--brick); border:1px solid rgba(193,84,60,0.3);
+  border-radius:8px; padding:7px 10px; font-size:0.78rem; font-weight:600;
+  margin-top:8px; display:flex; align-items:center; gap:6px;
+}
+.guidelines{
+  max-width:640px; margin:14px auto 0; padding:0 20px;
+}
+.guidelines-inner{
+  background:rgba(59,110,94,0.08); border:1px solid rgba(59,110,94,0.2);
+  border-radius:10px; padding:10px 13px; font-size:0.8rem; color:var(--moss-dark); line-height:1.4;
 }
 .empty{ text-align:center; padding:26px 10px; color:rgba(31,42,36,0.45); font-size:0.88rem; }
 .loading{ text-align:center; padding:26px 10px; color:rgba(31,42,36,0.4); font-size:0.85rem; }
@@ -135,6 +153,26 @@ footer.note{
   max-width:640px; margin:10px auto 30px; padding:0 20px;
   font-size:0.76rem; color:rgba(31,42,36,0.45); text-align:center;
 }
+
+.banner{
+  display:none; max-width:640px; margin:10px auto 0; padding:0 20px;
+}
+.banner.show{display:block;}
+.banner-inner{
+  background:rgba(193,84,60,0.1); border:1px solid rgba(193,84,60,0.3);
+  color:var(--brick); border-radius:10px; padding:10px 12px;
+  font-size:0.84rem; display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.banner-inner button{
+  font-family:inherit; font-weight:700; font-size:0.78rem;
+  background:var(--brick); color:#fff; border:none; border-radius:7px;
+  padding:6px 11px; cursor:pointer; flex:none;
+}
+.btn[disabled]{ opacity:0.6; cursor:default; }
+.field-error{
+  color:var(--brick); font-size:0.78rem; margin-top:6px; display:none;
+}
+.field-error.show{display:block;}
 </style>
 </head>
 <body>
@@ -156,6 +194,17 @@ footer.note{
   <button class="tab-btn" data-tab="community"><span class="ico">💬</span>Community</button>
 </nav>
 
+<div class="guidelines">
+  <div class="guidelines-inner">⚠️ Please post accurate, truthful information only. Posts flagged by multiple students will be marked for review.</div>
+</div>
+
+<div class="banner" id="conn-banner">
+  <div class="banner-inner">
+    <span id="conn-banner-text">Couldn't connect — showing what we have saved.</span>
+    <button onclick="loadPosts()">Retry</button>
+  </div>
+</div>
+
 <main>
 
   <section class="panel active" id="panel-help">
@@ -166,7 +215,8 @@ footer.note{
       <input id="help-name" placeholder="Your name" style="margin-top:8px;">
       <input id="help-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
       <div class="hint">Your contact is shown only when someone taps your post.</div>
-      <div class="actions"><button class="btn" onclick="addHelp()">Post request</button></div>
+      <div class="field-error" id="help-error"></div>
+      <div class="actions"><button class="btn" id="help-btn" onclick="addHelp()">Post request</button></div>
     </div>
     <div id="help-list"><div class="loading">Loading…</div></div>
   </section>
@@ -182,7 +232,8 @@ footer.note{
       <input id="svc-provider" placeholder="Your name" style="margin-top:8px;">
       <input id="svc-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
       <div class="hint">Your contact is shown only when someone taps your post.</div>
-      <div class="actions"><button class="btn alt" onclick="addService()">List service</button></div>
+      <div class="field-error" id="svc-error"></div>
+      <div class="actions"><button class="btn alt" id="svc-btn" onclick="addService()">List service</button></div>
     </div>
     <div id="svc-list"><div class="loading">Loading…</div></div>
   </section>
@@ -201,7 +252,8 @@ footer.note{
       <input id="lf-name" placeholder="Your name" style="margin-top:8px;">
       <input id="lf-contact" placeholder="Your contact (FB name, phone, or email)" style="margin-top:8px;">
       <div class="hint">Your contact is shown only when someone taps your post.</div>
-      <div class="actions"><button class="btn" onclick="addLost()">Post</button></div>
+      <div class="field-error" id="lf-error"></div>
+      <div class="actions"><button class="btn" id="lf-btn" onclick="addLost()">Post</button></div>
     </div>
     <div id="lf-list"><div class="loading">Loading…</div></div>
   </section>
@@ -260,73 +312,117 @@ function timeAgo(iso){
   return Math.floor(h/24)+'d ago';
 }
 
+function showBanner(msg){
+  document.getElementById('conn-banner-text').textContent = msg;
+  document.getElementById('conn-banner').classList.add('show');
+}
+function hideBanner(){
+  document.getElementById('conn-banner').classList.remove('show');
+}
+
 async function loadPosts(){
-  const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false });
-  if(error){ console.error(error); return; }
-  posts = { help:[], services:[], lost:[], report:[] };
-  data.forEach(p=>{ if(posts[p.category]) posts[p.category].push(p); });
-  renderAll();
+  try{
+    const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false });
+    if(error){ throw error; }
+    posts = { help:[], services:[], lost:[], report:[] };
+    data.forEach(p=>{ if(posts[p.category]) posts[p.category].push(p); });
+    renderAll();
+    hideBanner();
+  } catch(err){
+    console.error(err);
+    showBanner('Couldn\u2019t load posts \u2014 check your connection and tap Retry.');
+  }
 }
 
-async function insertPost(category, title, description, extra, author, contact){
-  if(!author){ alert('Please enter your name.'); return; }
-  const { error } = await sb.from('posts').insert([{ category, title, description, extra, author, contact }]);
-  if(error){ alert('Could not post — check your connection and try again.'); console.error(error); return; }
-  loadPosts();
+function setFieldError(prefix, msg){
+  const el = document.getElementById(prefix+'-error');
+  if(!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('show', !!msg);
 }
 
-function addHelp(){
+async function insertPost(category, title, description, extra, author, contact, prefix){
+  setFieldError(prefix, '');
+  if(!author){ setFieldError(prefix, 'Please enter your name.'); return false; }
+  const btn = document.getElementById(prefix+'-btn');
+  const originalLabel = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'Posting\u2026'; }
+  let success = false;
+  try{
+    const { error } = await sb.from('posts').insert([{ category, title, description, extra, author, contact }]);
+    if(error){ throw error; }
+    hideBanner();
+    await loadPosts();
+    success = true;
+  } catch(err){
+    console.error(err);
+    setFieldError(prefix, 'Couldn\u2019t post \u2014 check your connection and try again.');
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = originalLabel; }
+  }
+  return success;
+}
+
+async function addHelp(){
   const t = document.getElementById('help-title').value.trim();
   const d = document.getElementById('help-desc').value.trim();
   const name = document.getElementById('help-name').value.trim();
   const c = document.getElementById('help-contact').value.trim();
-  if(!t) return;
-  insertPost('help', t, d, null, name, c);
-  document.getElementById('help-title').value='';
-  document.getElementById('help-desc').value='';
-  document.getElementById('help-name').value='';
-  document.getElementById('help-contact').value='';
+  if(!t){ setFieldError('help', 'Please describe what you need help with.'); return; }
+  const ok = await insertPost('help', t, d, null, name, c, 'help');
+  if(ok){
+    document.getElementById('help-title').value='';
+    document.getElementById('help-desc').value='';
+    document.getElementById('help-name').value='';
+    document.getElementById('help-contact').value='';
+  }
 }
-function addService(){
+async function addService(){
   const n = document.getElementById('svc-name').value.trim();
   const p = document.getElementById('svc-price').value.trim();
   const d = document.getElementById('svc-desc').value.trim();
   const name = document.getElementById('svc-provider').value.trim();
   const c = document.getElementById('svc-contact').value.trim();
-  if(!n) return;
-  insertPost('services', n, d, p, name, c);
-  document.getElementById('svc-name').value='';
-  document.getElementById('svc-price').value='';
-  document.getElementById('svc-desc').value='';
-  document.getElementById('svc-provider').value='';
-  document.getElementById('svc-contact').value='';
+  if(!n){ setFieldError('svc', 'Please enter a service name.'); return; }
+  const ok = await insertPost('services', n, d, p, name, c, 'svc');
+  if(ok){
+    document.getElementById('svc-name').value='';
+    document.getElementById('svc-price').value='';
+    document.getElementById('svc-desc').value='';
+    document.getElementById('svc-provider').value='';
+    document.getElementById('svc-contact').value='';
+  }
 }
-function addLost(){
+async function addLost(){
   const type = document.getElementById('lf-type').value;
   const item = document.getElementById('lf-item').value.trim();
   const d = document.getElementById('lf-desc').value.trim();
   const name = document.getElementById('lf-name').value.trim();
   const c = document.getElementById('lf-contact').value.trim();
-  if(!item) return;
-  insertPost('lost', item, d, type, name, c);
-  document.getElementById('lf-item').value='';
-  document.getElementById('lf-desc').value='';
-  document.getElementById('lf-name').value='';
-  document.getElementById('lf-contact').value='';
+  if(!item){ setFieldError('lf', 'Please enter an item name.'); return; }
+  const ok = await insertPost('lost', item, d, type, name, c, 'lf');
+  if(ok){
+    document.getElementById('lf-item').value='';
+    document.getElementById('lf-desc').value='';
+    document.getElementById('lf-name').value='';
+    document.getElementById('lf-contact').value='';
+  }
 }
-function addReport(){
+async function addReport(){
   const t = document.getElementById('rp-title').value.trim();
   const loc = document.getElementById('rp-loc').value.trim();
   const d = document.getElementById('rp-desc').value.trim();
   const name = document.getElementById('rp-name').value.trim();
   const c = document.getElementById('rp-contact').value.trim();
-  if(!t) return;
-  insertPost('report', t, d, loc, name, c);
-  document.getElementById('rp-title').value='';
-  document.getElementById('rp-loc').value='';
-  document.getElementById('rp-desc').value='';
-  document.getElementById('rp-name').value='';
-  document.getElementById('rp-contact').value='';
+  if(!t){ setFieldError('rp', 'Please describe the issue.'); return; }
+  const ok = await insertPost('report', t, d, loc, name, c, 'rp');
+  if(ok){
+    document.getElementById('rp-title').value='';
+    document.getElementById('rp-loc').value='';
+    document.getElementById('rp-desc').value='';
+    document.getElementById('rp-name').value='';
+    document.getElementById('rp-contact').value='';
+  }
 }
 
 function openContactModal(title, author, contact){
@@ -339,6 +435,18 @@ function closeContactModal(){
   document.getElementById('contact-modal').classList.remove('open');
 }
 
+async function flagPost(id, currentFlags, event){
+  event.stopPropagation();
+  if(!confirm('Flag this post as false or misleading?')) return;
+  const { error } = await sb.from('posts').update({ flags: (currentFlags||0) + 1 }).eq('id', id);
+  if(error){ console.error(error); return; }
+  loadPosts();
+}
+
+function warnBadge(flags){
+  return flags >= 2 ? `<div class="warn-badge">⚠️ Flagged by ${flags} students as possibly false or misleading</div>` : '';
+}
+
 function renderHelp(){
   const el = document.getElementById('help-list');
   if(!posts.help.length){el.innerHTML='<div class="empty">No requests yet — be the first to ask.</div>'; return;}
@@ -347,7 +455,8 @@ function renderHelp(){
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">Help</span></div>
       <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
+      ${warnBadge(x.flags)}
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}<button class="flag-btn" onclick="flagPost('${x.id}', ${x.flags||0}, event)">⚠️ Flag</button></div>
     </div>`).join('');
 }
 function renderServices(){
@@ -358,7 +467,8 @@ function renderServices(){
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.extra||'Service')}</span></div>
       <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
+      ${warnBadge(x.flags)}
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}<button class="flag-btn" onclick="flagPost('${x.id}', ${x.flags||0}, event)">⚠️ Flag</button></div>
     </div>`).join('');
 }
 function renderLost(){
@@ -369,7 +479,8 @@ function renderLost(){
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag ${x.extra==='found'?'found':''}">${x.extra==='found'?'Found':'Lost'}</span></div>
       <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
+      ${warnBadge(x.flags)}
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}<button class="flag-btn" onclick="flagPost('${x.id}', ${x.flags||0}, event)">⚠️ Flag</button></div>
     </div>`).join('');
 }
 function renderReport(){
@@ -380,7 +491,8 @@ function renderReport(){
       <div class="top"><h3>${esc(x.title)}</h3><span class="tag urgent">Report</span></div>
       <div class="meta"><span class="mini-avatar">${initials(x.author)}</span>${esc(x.extra||'')} · ${esc(x.author)} · ${timeAgo(x.created_at)}</div>
       ${x.description?`<p class="body">${esc(x.description)}</p>`:''}
-      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}</div>
+      ${warnBadge(x.flags)}
+      <div class="contact-hint">📩 Tap to see how to reach ${esc(x.author||'this person')}<button class="flag-btn" onclick="flagPost('${x.id}', ${x.flags||0}, event)">⚠️ Flag</button></div>
     </div>`).join('');
 }
 function renderFeed(){
@@ -402,4 +514,18 @@ function renderAll(){
   renderHelp(); renderServices(); renderLost(); renderReport(); renderFeed();
 }
 
-document.getElementById('tabs').addEve
+document.getElementById('tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+});
+
+loadPosts();
+setInterval(loadPosts, 15000);
+</script>
+</body>
+</html>
+
